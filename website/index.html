@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shattered Crown · Crown Valley</title>
+<style>
+*{box-sizing:border-box}html{background:#101b19;color:#efe9d7;font:16px/1.5 "Segoe UI",sans-serif}body{margin:0}main,header{width:min(1160px,92%);margin:auto}header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #41504a;padding:18px 0;color:#dfcd9f}header strong{font-family:Georgia,serif;letter-spacing:.12em}small,.label{text-transform:uppercase;letter-spacing:.15em;font-size:.72rem;font-weight:700;color:#cbb982}h1,h2,h3{font-family:Georgia,serif;font-weight:400;margin:0}h1{font-size:clamp(3rem,7vw,6rem);line-height:1.08;margin:.12em 0}p{color:#c1cbc2;margin:.45em 0}section{padding:clamp(24px,4vw,52px) 0 22px}.layout{display:grid;grid-template-columns:1.8fr 1fr;gap:20px;margin-bottom:32px}.map{background:#253c32;position:relative;aspect-ratio:1.42;overflow:hidden;border:1px solid #53614d;border-radius:4px}canvas{width:100%;height:100%;display:block}.pin{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;background:#172820;color:#f4ebcd;border:1px solid #9e9c72;padding:.42em .75em;box-shadow:0 3px 9px #0007}.pin[aria-pressed=true]{background:#e4d29f;color:#17271b}.panel{background:#1a2823;padding:clamp(20px,3vw,36px);border:1px solid #405044;border-radius:4px}.panel h2{font-size:2.3rem}.stock{display:flex;gap:22px;margin:20px 0;padding:15px 0;border-block:1px solid #415046}.stock span{display:block;color:#a9b8ac;font-size:.85rem}.stock b{font-size:1.35rem}button{cursor:pointer;font:inherit;font-weight:600;border-radius:3px}button:focus-visible{outline:3px solid white;outline-offset:3px}.action{display:block;width:100%;padding:11px;margin-top:10px;border:1px solid #9b9979;background:transparent;color:#e8dfc8}.primary{background:#dcc68e;color:#202719}.action:disabled{opacity:.52;cursor:default}#message{min-height:3em;font-size:.88rem;margin-top:15px}@media(max-width:750px){.layout{grid-template-columns:1fr}.pin{font-size:.78rem}header small{letter-spacing:.06em}}
+</style>
+<header><a href="../index.html" style="color:inherit;text-decoration:none" aria-label="Shattered Crown homepage"><strong>♛ &nbsp; SHATTERED CROWN</strong></a><small>Playable preview</small></header>
+<main><section><span class="label">Kingdom map</span><h1>Crown Valley</h1><p>Choose a holding on the map. Gather timber and stone to raise your Town Hall to level 3.</p></section>
+<div class="layout"><div class="map" aria-label="Map of Crown Valley"><canvas width="900" height="636" aria-hidden="true"></canvas>
+<button class="pin" data-key="mill" style="left:23%;top:40%">Sawmill</button><button class="pin" data-key="hall" style="left:54%;top:55%">Town Hall</button><button class="pin" data-key="quarry" style="left:78%;top:30%">Stone Quarry</button></div>
+<aside class="panel"><span class="label" id="role"></span><h2 id="name"></h2><p id="desc"></p><div class="stock"><div><span>Timber</span><b id="wood"></b></div><div><span>Stone</span><b id="stone"></b></div><div><span>Hall level</span><b id="level"></b></div></div><button class="action primary" id="act"></button><p id="message" role="status"></p></aside></div></main>
+<script>
+const ctx=document.querySelector('canvas').getContext('2d');
+let seed=49;
+function random(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}
+function polygon(points,color){ctx.fillStyle=color;ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fill()}
+ctx.fillStyle='#41523e';ctx.fillRect(0,0,900,636);
+for(let i=0;i<2800;i++){const x=random()*900,y=random()*636;ctx.fillStyle=['#586348','#4d5d44','#364c3b'][i%3];ctx.beginPath();ctx.ellipse(x,y,4+random()*30,2+random()*10,-.3,0,7);ctx.fill()}
+function path(d,color,width){ctx.lineWidth=width;ctx.strokeStyle=color;ctx.stroke(new Path2D(d))}
+const river='M 90 -20 C 390 96 263 184 350 255 S 319 400 395 471 S 428 570 643 662';
+path(river,'#85896c',43);path(river,'#456d70',35);path(river,'#608183',15);
+path('M 160 245 Q 337 295 488 318 T 705 174','#998a68',8);
+for(let i=0;i<1050;i++){const x=random()*900,y=random()*636;if((Math.sin(x/75)+Math.cos(y/49)<.25)||Math.abs(x-340)<55||Math.hypot(x-485,y-310)<72)continue;const s=6+random()*14;polygon([[x,y-s],[x-s*.42,y],[x+s*.42,y]],'#243e32');polygon([[x,y-s],[x-s*.42,y],[x,y-2]],'#44644a')}
+for(let i=0;i<18;i++){const x=600+random()*300,y=random()*125,s=22+random()*50;polygon([[x-s,y+s],[x,y-s*.45],[x+s,y+s*.6]],'#687468');polygon([[x,y-s*.45],[x+s,y+s*.6],[x+5,y+s*.3]],'#445650')}
+function tower(x,y,w,h){ctx.fillStyle='#b1aa8e';ctx.fillRect(x-w/2,y-h,w,h);ctx.fillStyle='#867e6d';ctx.fillRect(x,y-h,w/2,h);polygon([[x-w*.7,y-h],[x,y-h-w],[x+w*.7,y-h]],'#573e3b');ctx.fillStyle='#323d35';ctx.fillRect(x-2,y-h+8,4,9)}
+ctx.fillStyle='#a29b80';ctx.fillRect(449,294,72,34);tower(485,318,32,60);tower(450,328,20,39);tower(523,328,20,39);tower(205,232,34,21);
+let state={wood:0,stone:0,level:1},selected='hall';
+const key='shattered-crown-valley-preview-v1';
+try{const saved=JSON.parse(localStorage.getItem(key));if(saved&&['wood','stone','level'].every(k=>Number.isSafeInteger(saved[k])&&saved[k]>=0)&&saved.level>=1&&saved.level<=3)state=saved}catch{}
+const holdings={hall:['Kingdom seat','Town Hall'],mill:['Timber holding','Sawmill'],quarry:['Stone holding','Stone Quarry']};
+const el=id=>document.getElementById(id);
+function render(msg=''){const [role,name]=holdings[selected],cost=state.level*5,done=state.level===3,hall=selected==='hall',wood=selected==='mill';
+el('role').textContent=role;el('name').textContent=name;el('desc').textContent=hall?(done?'Your level 3 hall overlooks Crown Valley. The preview objective is complete.':'The next level requires '+cost+' timber and '+cost+' stone.'):(wood?'Fell mature pines along the western bank.':'Cut building stone from the northern ridge.');
+for(const k of ['wood','stone','level'])el(k).textContent=state[k];
+el('act').textContent=hall?(done?'Level 3 reached':'Upgrade Town Hall'):(wood?'Gather 5 timber':'Gather 5 stone');el('act').disabled=hall&&(done||state.wood<cost||state.stone<cost);
+document.querySelectorAll('.pin').forEach(b=>b.setAttribute('aria-pressed',b.dataset.key===selected));el('message').textContent=msg}
+document.querySelectorAll('.pin').forEach(b=>b.onclick=()=>{selected=b.dataset.key;render()});
+el('act').onclick=()=>{let msg;if(selected==='hall'){const cost=state.level*5;if(state.level>=3||state.wood<cost||state.stone<cost)return;state.wood-=cost;state.stone-=cost;state.level++;msg='Town Hall upgraded to level '+state.level+'.'}else{const wood=selected==='mill';state[wood?'wood':'stone']+=5;msg=wood?'5 timber delivered.':'5 stone delivered.'}try{localStorage.setItem(key,JSON.stringify(state))}catch{msg+=' Progress lasts for this visit.'}render(msg)};render();
+</script></html>
